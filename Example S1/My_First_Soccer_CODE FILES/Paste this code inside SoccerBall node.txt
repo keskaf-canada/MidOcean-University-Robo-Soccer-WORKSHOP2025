@@ -1,0 +1,30 @@
+Solid {
+  translation 0.2 0.1 0.021
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "football_base_color.jpg" ]  # Must be in the project folder
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.021
+      }
+    }
+    Emitter {
+      name "ball emitter"
+      type "infra-red"
+      range 0.6
+      channel 4
+    }
+  ]
+  name "SoccerBall"
+  boundingObject Sphere {
+    radius 0.021
+  }
+  physics Physics {
+    mass 0.05
+  }
+}

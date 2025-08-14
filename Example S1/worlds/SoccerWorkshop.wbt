@@ -1,0 +1,83 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "../protos/E-puck.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.1525056016336239 0.17020625179044452 0.9735357586251336 1.4875
+  position -0.1508 -1.4853 0.5853
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Solid {
+  translation 0 0 0.01
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "soccer-256.png"
+          ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Plane {
+        size 1.5 1.5
+      }
+    }
+  ]
+  name "SoccerField"
+  boundingObject Plane {
+    size 1.5 1.5
+  }
+  locked TRUE
+}
+Robot {
+  translation 0.2 0.1 0.030920468668912814
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "football_base_color.png"
+          ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.021
+      }
+    }
+    Emitter {
+      name "ball emitter"
+      type "infra-red"
+      range 0.6
+      channel 4
+    }
+  ]
+  name "SoccerBall"
+  boundingObject Sphere {
+    radius 0.021
+  }
+  physics Physics {
+    mass 0.05
+  }
+  controller "<none>"
+  linearVelocity 0 0 8.217538549820105e-06
+}
+E-puck {
+  hidden position_0_0 3.098499511108198e-08
+  hidden position_0_1 -3.0985047402415163e-08
+  hidden rotation_1 0 1 0 2.9802322387695313e-08
+  hidden rotation_2 0 -1 0 2.9802322387695313e-08
+  translation -0.26999999999999996 -2.375420472172079e-16 0.009934984448704956
+  rotation 0.5586595340609961 0.0001728731230007049 -0.8293970672227108 4.372881059785101e-09
+  controller "my_controller"
+}

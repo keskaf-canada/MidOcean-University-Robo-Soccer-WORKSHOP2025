@@ -1,0 +1,108 @@
+#VRML_SIM R2025a utf8
+# This is the header indicating the file format and Webots version.
+
+# === STEP 0: Import background (sky) and robot PROTO files ===
+# These allow us to use advanced nodes like sky, lights, and the e-puck robot.
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "../protos/E-puck.proto"  # Local path to the e-puck PROTO file (adjust path if needed)
+
+# === STEP 1: World Info (you can customize later) ===
+WorldInfo {
+  # Empty for now, but required in every world.
+}
+
+# === STEP 2: Camera viewpoint ===
+Viewpoint {
+  # This defines where the camera looks from when the simulation starts.
+  orientation -0.1525 0.1702 0.9735 1.4875  # rotation (X, Y, Z, angle)
+  position -0.1508 -1.4853 0.5853          # camera position (X, Y, Z)
+}
+
+# === STEP 3: Sky and background lighting ===
+TexturedBackground {
+  # Creates a nice sky background
+}
+TexturedBackgroundLight {
+  # Provides lighting based on the sky texture
+}
+
+# === STEP 4: Soccer Field Surface ===
+Solid {
+  translation 0 0 0.01  # Lift the field slightly above the base
+
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "soccer-256.png"  # ✅ Make sure this PNG image exists in the same folder as this .wbt file
+          ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Plane {
+        size 1.5 1.5  # Field size: 1.5 x 1.5 meters
+      }
+    }
+  ]
+
+  name "SoccerField"  # Name of the object in the simulation
+  boundingObject Plane {
+    size 1.5 1.5  # Same size as the visible field, used for physics
+  }
+  locked TRUE  # Prevent the field from moving
+}
+
+# === STEP 5: Soccer Ball ===
+Robot {
+  translation 0.2 0.1 0.021  # Starting position of the ball on the field
+  rotation 0 1 0 0          # Ball orientation (no rotation needed)
+
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [
+            "football_base_color.png"  # ✅ Make sure this PNG image exists in the same folder as this .wbt file
+          ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.021  # Ball radius in meters
+      }
+    }
+
+    # === Ball emits infrared signals so the robot can detect it ===
+    Emitter {
+      name "ball emitter"
+      type "infra-red"  # This is key for the robot to detect the ball using IR
+      range 0.6          # How far the ball's signal reaches (in meters)
+      channel 4          # Channel used for communication (must match robot receiver)
+    }
+  ]
+
+  name "SoccerBall"
+  boundingObject Sphere {
+    radius 0.021  # Must match the visual radius
+  }
+
+  physics Physics {
+    mass 0.05  # Mass of the ball (important for realism)
+  }
+
+  controller "<none>"  # The ball does not have a controller
+}
+
+# === STEP 6: E-puck robot (inserted from PROTO) ===
+E-puck {
+  translation -0.27 0 0  # Starting position of the robot (X, Y, Z)
+
+  # ❗ Very important: After adding this, go to the robot's properties and set:
+  # controller: "my_controller"
+  # This must match your controller folder name: controllers/my_controller/my_controller.py
+}

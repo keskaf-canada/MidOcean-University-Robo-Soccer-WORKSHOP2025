@@ -1,0 +1,22 @@
+# Simple example: Move the robot forward
+
+from controller import Robot
+
+robot = Robot()                     # Initialize robot
+timestep = int(robot.getBasicTimeStep())  # Get simulation time step
+
+# Get access to the motors
+left_motor = robot.getDevice("left wheel motor")
+right_motor = robot.getDevice("right wheel motor")
+
+# Set motors to velocity control mode
+left_motor.setPosition(float('inf'))
+right_motor.setPosition(float('inf'))
+
+# Set motors speed (3 = medium speed)
+left_motor.setVelocity(3.0)
+right_motor.setVelocity(3.0)
+
+# Run the simulation loop
+while robot.step(timestep) != -1:
+    pass  # Robot keeps moving forward
