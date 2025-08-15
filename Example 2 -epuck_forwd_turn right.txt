@@ -1,0 +1,52 @@
+# Dr. Khaled Eskaf
+#Robotics WorkShop - 1
+#06-2024
+-----------------------------------
+
+# Import the Robot and Motor classes from the Webots controller module
+from controller import Robot, Motor
+# استيراد الفئات Robot و Motor من وحدة التحكم Webots
+
+# Define a time step for the simulation (this value should match Webots simulation time step)
+TIME_STEP = 64
+# تعريف خطوة زمنية للمحاكاة (يجب أن تطابق هذه القيمة خطوة الوقت في Webots)
+
+# Define the maximum speed for the e-puck robot motors
+MAX_SPEED = 6.28  # Note: e-puck's speed is often specified in radians per second
+# تحديد السرعة القصوى لمحركات الروبوت e-puck
+# ملاحظة: غالبًا ما يتم تحديد سرعة e-puck بالراديان في الثانية
+
+# Create an instance of the Robot class
+robot = Robot()
+# إنشاء مثيل لفئة Robot
+
+# Get the left and right wheel motors of the e-puck robot
+leftMotor = robot.getDevice('left wheel motor')
+rightMotor = robot.getDevice('right wheel motor')
+# الحصول على محركات العجلة اليسرى واليمنى للروبوت e-puck
+
+# Set the target position of the motors to infinity (to control speed instead of position)
+leftMotor.setPosition(float('inf'))
+rightMotor.setPosition(float('inf'))
+# ضبط الموضع المستهدف للمحركات إلى ما لا نهاية (للتحكم في السرعة بدلاً من الموضع)
+
+# Move forward for a specific duration
+# التحرك للأمام لمدة محددة
+for step in range(10):
+    leftMotor.setVelocity(0.5 * MAX_SPEED)
+    rightMotor.setVelocity(0.5 * MAX_SPEED)
+    robot.step(TIME_STEP)
+
+# Turn right by setting the left wheel speed to maximum and right wheel speed to zero
+# الدوران إلى اليمين عن طريق ضبط سرعة العجلة اليسرى على الحد الأقصى وسرعة العجلة اليمنى إلى الصفر
+leftMotor.setVelocity(0.5 * MAX_SPEED)
+rightMotor.setVelocity(0)
+for step in range(10):
+    robot.step(TIME_STEP)
+
+# Stop the robot by setting both wheel speeds to zero
+# إيقاف الروبوت عن طريق ضبط سرعتي العجلتين إلى الصفر
+leftMotor.setVelocity(0)
+rightMotor.setVelocity(0)
+while robot.step(TIME_STEP) != -1:
+    pass

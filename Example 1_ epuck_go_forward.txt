@@ -1,0 +1,43 @@
+# Dr. Khaled Eskaf
+#Robotics WorkShop - 1
+#06-2024
+-----------------------------------
+
+# Import the Robot and Motor classes from the Webots controller module
+# استيراد الفئات Robot و Motor من وحدة التحكم Webots
+from controller import Robot, Motor
+
+# Define a time step for the simulation (this value should match Webots simulation time step)
+# تعريف خطوة زمنية للمحاكاة (يجب أن تطابق هذه القيمة خطوة الوقت في Webots)
+TIME_STEP = 64
+
+# Define the maximum speed for the e-puck robot motors
+# تحديد السرعة القصوى لمحركات الروبوت e-puck
+MAX_SPEED = 6.28  # Note: e-puck's speed is often specified in radians per second
+# ملاحظة: غالبًا ما يتم تحديد سرعة e-puck بالراديان في الثانية
+
+# Create an instance of the Robot class
+# إنشاء مثيل لفئة Robot
+robot = Robot()
+
+# Get the left and right wheel motors of the e-puck robot
+# الحصول على محركات العجلة اليسرى واليمنى للروبوت e-puck
+leftMotor = robot.getDevice('left wheel motor')
+rightMotor = robot.getDevice('right wheel motor')
+
+# Set the target position of the motors to infinity (to control speed instead of position)
+# ضبط الموضع المستهدف للمحركات إلى ما لا نهاية (للتحكم في السرعة بدلاً من الموضع)
+leftMotor.setPosition(float('inf'))
+rightMotor.setPosition(float('inf'))
+
+# Set the initial speed of the motors to 10% of the maximum speed
+# ضبط السرعة الأولية للمحركات إلى 10% من السرعة القصوى
+leftMotor.setVelocity(0.1 * MAX_SPEED)
+rightMotor.setVelocity(0.1 * MAX_SPEED)
+
+# Main loop: run until the simulation is terminated
+# الحلقة الرئيسية: تستمر حتى يتم إنهاء المحاكاة
+while robot.step(TIME_STEP) != -1:
+    # In this loop, we don't need to do anything because the robot will keep moving forward
+    # في هذه الحلقة، لا نحتاج إلى فعل أي شيء لأن الروبوت سيستمر في التحرك للأمام
+    pass
