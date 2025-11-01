@@ -1,0 +1,87 @@
+from controller import Robot
+import math
+
+robot = Robot()
+timestep = int(robot.getBasicTimeStep())
+
+ تفعيل الحساسات
+ir_sensor = robot.getDevice("ir_ball_sensor")
+ir_sensor.enable(timestep)
+
+sonar = robot.getDevice("sonar")
+sonar.enable(timestep)
+
+gps = robot.getDevice("gps")
+gps.enable(timestep)
+
+compass = robot.getDevice("compass")
+compass.enable(timestep)
+
+# إعداد المحركات 
+left_motor = robot.getDevice("left wheel motor")
+right_motor = robot.getDevice("right wheel motor")
+left_motor.setPosition(float('inf'))
+right_motor.setPosition(float('inf'))
+left_motor.setVelocity(0.0)
+right_motor.setVelocity(0.0)
+
+# موقع مرمى الخصم 
+goal_x = 1.0
+goal_y = 0.0
+
+# دوال مساعدة 
+def get_angle_to_goal(x, y, compass_values):
+    north = [compass_values[0], compass_values[1], compass_values[2]]
+    robot_angle = math.atan2(north[0], north[2])  # اتجاه الروبوت
+    target_angle = math.atan2(goal_y - y, goal_x - x)
+    angle_diff = target_angle - robot_angle
+    # ضبط الزاوية بين -π و +π
+    if angle_diff > math.pi:
+        angle_diff -= 2 * math.pi
+    elif angle_diff < -math.pi:
+        angle_diff += 2 * math.pi
+    return angle_diff
+
+# الحلقة الرئيسية 
+while robot.step(timestep) != -1:
+    ball_detected = ir_sensor.getValue()
+    sonar_distance = sonar.getValue()
+    pos = gps.getValues()
+    compass_values = compass.getValues()
+    x = pos[0]
+    y = pos[1]
+
+    # منطق التحكم 
+    # الدفاع: إذا قرب من المرمى الخاص
+    if x < -0.5:
+        left_motor.setVelocity(-2.0)
+        right_motor.setVelocity(2.0)
+        continue
+
+    # إذا الكرة مكتشفة
+    if ball_detected > 0.5:
+        # تجنب التصادم
+        if sonar_distance < 0.25:
+            left_motor.setVelocity(-1.0)
+            right_motor.setVelocity(1.0)
+        else:
+            # توجيه نحو المرمى
+            angle = get_angle_to_goal(x, y, compass_values)
+            distance_to_goal = math.sqrt((goal_x - x)**2 + (goal_y - y)**2)
+
+            # ضبط السرعة حسب الزاوية والمسافة
+            base_speed = 3.0
+            if abs(angle) > 0.2:  # يحتاج يعدل اتجاهه
+                left_motor.setVelocity(2.0 - angle)
+                right_motor.setVelocity(2.0 + angle)
+            else:
+                if distance_to_goal > 0.5:
+                    left_motor.setVelocity(base_speed)
+                    right_motor.setVelocity(base_speed)
+                else:
+                    left_motor.setVelocity(2.5)
+                    right_motor.setVelocity(2.8)
+    else:
+        # البحث عن الكرة (دوران ببطء)
+        left_motor.setVelocity(-1.0)
+        right_motor.setVelocity(1.0)
